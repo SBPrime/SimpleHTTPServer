@@ -47,6 +47,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import javax.imageio.ImageIO;
 import org.primesoft.simplehttpserver.api.HttpStatusCodes;
 import org.primesoft.simplehttpserver.api.IHeaders;
@@ -58,40 +59,17 @@ import org.primesoft.simplehttpserver.api.IService;
  * @author SBPrime
  */
 public class DefaultService implements IService {
-
+    private static final byte[] s_data = "SimpleHTTP Server plugin".getBytes(Charset.forName("UTF-8"));
+    
+    
     @Override
-    public void handle(IHttpRequest request) throws IOException {
-        int w = 256;
-        int h = 256;
-        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
-        int[] dataBuffInt = new int[w * h];
-
-        int pos = 0;
-        for (int j = 0; j < h; j++) {
-            for (int i = 0; i < w; i++) {
-                dataBuffInt[pos] = 0xff << 24 | // A
-                        0x00 << 16 | // R
-                        (i & 0xff) << 8 | // G
-                        (j & 0xff); // B
-                pos++;
-            }
-        }
-        
-        img.setRGB(0, 0, w, h, dataBuffInt, 0, w);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(img, "png", baos);
-        baos.flush();
-        byte[] imageInByte = baos.toByteArray();
-        baos.close();
-
+    public void handle(IHttpRequest request) throws IOException {        
         IHeaders outHeaders = request.getResponseHeader();
-        outHeaders.add("Content-Type", "image/png");
-
-        request.sendResponse(HttpStatusCodes.OK, imageInByte.length);
+        outHeaders.add("Content-Type", "text/plain");
+        request.sendResponse(HttpStatusCodes.OK, s_data.length);
 
         OutputStream os = request.getResponseBody();
-        os.write(imageInByte);
+        os.write(s_data);
         os.close();
     }
 

@@ -39,7 +39,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.primesoft.simplehttpserver;
 
 import java.io.IOException;
@@ -48,10 +47,8 @@ import java.util.logging.Logger;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.primesoft.simplehttpserver.api.IApi;
-import org.primesoft.simplehttpserver.api.IHttpServer;
 import org.primesoft.simplehttpserver.commands.GlobalCommands;
 import org.primesoft.simplehttpserver.commands.utils.CommandManager;
 import org.primesoft.simplehttpserver.configuration.ConfigProvider;
@@ -60,12 +57,12 @@ import org.primesoft.simplehttpserver.implementation.SunHttpServer;
 import org.primesoft.simplehttpserver.metrics.MetricsLite;
 import org.primesoft.simplehttpserver.utils.ExceptionHelper;
 
-
 /**
  *
  * @author SBPrime
  */
 public class SimpleHTTPServerMain extends JavaPlugin {
+
     private static final Logger s_log = Logger.getLogger("Minecraft.SimpleHTTPServer");
 
     private static ConsoleCommandSender s_console;
@@ -85,13 +82,22 @@ public class SimpleHTTPServerMain extends JavaPlugin {
     }
 
     public static void log(String msg) {
-        System.out.println(msg);
-        
-        if (s_log == null || msg == null || s_prefix == null) {
+        String formated;
+        if (msg == null) {
+            return;
+        }
+        if (s_prefix == null || s_logFormat == null) {
+            formated = msg;
+        } else {
+            formated = String.format(s_logFormat, s_prefix, msg);
+        }
+
+        if (s_log == null) {
+            System.out.println(formated);
             return;
         }
 
-        s_log.log(Level.INFO, String.format(s_logFormat, s_prefix, msg));
+        s_log.log(Level.INFO, formated);
     }
 
     public static void say(Player player, String msg) {
@@ -100,30 +106,29 @@ public class SimpleHTTPServerMain extends JavaPlugin {
         } else {
             player.sendRawMessage(msg);
         }
-    }    
-    
+    }
+
     /**
      * Instance of the API
      */
     private IApi m_api;
-    
-    
+
     /**
      * Get the instance of API
-     * @return 
+     *
+     * @return
      */
-    public IApi getAPI()
-    {
+    public IApi getAPI() {
         return m_api;
     }
-    
+
     @Override
     public void onEnable() {
         PluginDescriptionFile desc = getDescription();
         s_prefix = String.format("[%s]", desc.getName());
         s_console = getServer().getConsoleSender();
         s_instance = this;
-        
+
         try {
             MetricsLite metrics = new MetricsLite(this);
             if (!metrics.isOptOut()) {
@@ -131,7 +136,7 @@ public class SimpleHTTPServerMain extends JavaPlugin {
                 m_metrics.start();
             }
         } catch (IOException e) {
-            ExceptionHelper.printException(e, "Error initializing MCStats");            
+            ExceptionHelper.printException(e, "Error initializing MCStats");
         }
 
         if (!ConfigProvider.load(this)) {
@@ -140,7 +145,7 @@ public class SimpleHTTPServerMain extends JavaPlugin {
 
         m_commandManager = new CommandManager(this);
         m_commandManager.initializeCommands(GlobalCommands.class);
-        
+
         m_api = new SimpleApi(new SunHttpServer());
 
         log("Enabled");
