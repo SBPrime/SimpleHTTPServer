@@ -49,6 +49,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.primesoft.simplehttpserver.api.IApi;
+import org.primesoft.simplehttpserver.api.IHttpServer;
 import org.primesoft.simplehttpserver.commands.GlobalCommands;
 import org.primesoft.simplehttpserver.commands.utils.CommandManager;
 import org.primesoft.simplehttpserver.configuration.ConfigProvider;
@@ -149,5 +150,16 @@ public class SimpleHTTPServerMain extends JavaPlugin {
         m_api = new SimpleApi(new SunHttpServer());
 
         log("Enabled");
+    }
+
+    @Override
+    public void onDisable() {
+        super.onDisable();
+        IHttpServer server = (m_api != null) ? m_api.getServer() : null;
+        if (server != null) {
+            server.stopServer();
+        }
+
+        log("Disabled");
     }
 }
