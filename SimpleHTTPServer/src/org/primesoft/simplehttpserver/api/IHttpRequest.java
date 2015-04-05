@@ -51,14 +51,48 @@ import java.net.URI;
  * @author SBPrime
  */
 public interface IHttpRequest {
+    /**
+     * The request URI
+     * @return 
+     */
     public URI getUri();
+    
+    /**
+     * The request method (GET, POST, etc.)
+     * @return 
+     */
     public String getMethod();
     
+    /**
+     * The request header 
+     * @return 
+     */
     public IHeaders getRequestHeader();
+    
+    /**
+     * The response header
+     * @return 
+     */
     public IHeaders getResponseHeader();
     
+    /**
+     * The tequest body (post data)
+     * @return 
+     */
     public InputStream getRequestBody();
+    
+    /**
+     * The response body
+     * @return 
+     */
     public OutputStream getResponseBody();
     
+    /**
+     * Use this function to send the http response code
+     * and set the response size
+     * @param httpCode
+     * @param bodySize
+     * @throws IOException 
+     */
     public void sendResponse(int httpCode, int bodySize) throws IOException;
 }

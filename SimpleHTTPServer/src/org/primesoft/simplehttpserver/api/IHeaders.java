@@ -48,10 +48,36 @@ import java.util.List;
  * @author SBPrime
  */
 public interface IHeaders {
+    /**
+     * Get list of all defined headers
+     * @return 
+     */
     public String[] getHeaderNames();
+    
+    /**
+     * Get a value for header (cass sensitive)
+     * @param headerName
+     * @return 
+     */
     public List<String> get(String headerName);
     
+    /**
+     * Remove a header entry (cass sensitive)
+     * @param headerName 
+     */
     public void remove(String headerName);
+    
+    /**
+     * Add or modiffy a header entry
+     * @param headerName
+     * @param value 
+     */
     public void add(String headerName, List<String> value);
+    
+    /**
+     * Add or modiffy a header entry
+     * @param headerName
+     * @param value 
+     */
     public void add(String headerName, String value);
 }
