@@ -1,8 +1,0 @@
-SimpleHTTP:
-  #Server listening port
-  port: 8080  
-  #Server address visible from the internet
-  externalAddress: http://my.epic.host.com:8080/
-  #Register the default context
-  registerDefault: true
-    
